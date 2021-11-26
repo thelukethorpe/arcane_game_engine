@@ -19,7 +19,9 @@ public class Circle implements Polygon {
 
   @Override
   public boolean contains(IntegerVertex vertex) {
-    return centre.distanceFrom(vertex.toReal()) <= radius;
+    double xDiff = centre.getX() - vertex.getX();
+    double yDiff = centre.getY() - vertex.getY();
+    return xDiff * xDiff + yDiff * yDiff <= radius * radius;
   }
 
   @Override
