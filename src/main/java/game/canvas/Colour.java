@@ -11,6 +11,10 @@ public class Colour {
   public static final Colour GREEN = Colour.rgb(0, RGB_VALUE_LIMIT, 0);
   public static final Colour BLUE = Colour.rgb(0, 0, RGB_VALUE_LIMIT);
 
+  public static final Colour MAGENTA = Colour.rgb(RGB_VALUE_LIMIT, 0, RGB_VALUE_LIMIT);
+  public static final Colour YELLOW = Colour.rgb(RGB_VALUE_LIMIT, RGB_VALUE_LIMIT, 0);
+  public static final Colour CYAN = Colour.rgb(0, RGB_VALUE_LIMIT, RGB_VALUE_LIMIT);
+
   private final int alpha;
   private final int red;
   private final int green;

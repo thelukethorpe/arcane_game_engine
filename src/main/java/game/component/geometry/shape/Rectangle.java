@@ -5,7 +5,6 @@ import game.component.geometry.RealVertex;
 import game.util.MathUtil;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 
 public class Rectangle implements Polygon {
@@ -37,17 +36,6 @@ public class Rectangle implements Polygon {
         && vertex.getX() <= topLeftVertex.getX() + width
         && topLeftVertex.getY() <= vertex.getY()
         && vertex.getY() <= topLeftVertex.getY() + height;
-  }
-
-  @Override
-  public List<RealVertex> vertices() {
-    double xTopLeft = topLeftVertex.getX();
-    double yTopLeft = topLeftVertex.getY();
-    return List.of(
-        new RealVertex(xTopLeft, yTopLeft),
-        new RealVertex(xTopLeft + width, yTopLeft),
-        new RealVertex(xTopLeft + width, yTopLeft + height),
-        new RealVertex(xTopLeft, yTopLeft + height));
   }
 
   @Override

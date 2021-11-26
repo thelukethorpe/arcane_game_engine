@@ -5,7 +5,6 @@ import game.component.geometry.RealVertex;
 import game.util.MathUtil;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Function;
 
 public class Triangle implements Polygon {
@@ -34,11 +33,6 @@ public class Triangle implements Polygon {
     boolean hasNegative = (dot1 < 0.0) || (dot2 < 0.0) || (dot3 < 0.0);
     boolean hasPositive = (dot1 > 0.0) || (dot2 > 0.0) || (dot3 > 0.0);
     return !(hasNegative && hasPositive);
-  }
-
-  @Override
-  public List<RealVertex> vertices() {
-    return List.of(a, b, c);
   }
 
   @Override

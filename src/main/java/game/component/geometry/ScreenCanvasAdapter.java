@@ -12,7 +12,6 @@ public class ScreenCanvasAdapter {
         Math.min(
             outputDimensions.getX() / (double) inputDimensions.getX(),
             outputDimensions.getY() / (double) inputDimensions.getY());
-    // offset = (output - input * scale) / 2.0
     this.offset = outputDimensions.toReal().minus(inputDimensions.toReal().grow(scale)).shrink(2.0);
   }
 
