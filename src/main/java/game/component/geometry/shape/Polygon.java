@@ -1,17 +1,18 @@
 package game.component.geometry.shape;
 
-import game.component.geometry.Vertex;
+import game.component.geometry.IntegerVertex;
+import game.component.geometry.RealVertex;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
 public interface Polygon {
 
-  boolean contains(Vertex<Integer> vertex);
+  boolean contains(IntegerVertex vertex);
 
-  List<Vertex<Double>> vertices();
+  List<RealVertex> vertices();
 
-  Collection<Vertex<Integer>> getIntegerCovering();
+  Collection<IntegerVertex> getIntegerCovering();
 
-  Polygon transform(Function<Vertex<Double>, Vertex<Double>> function);
+  Polygon transform(Function<RealVertex, RealVertex> function);
 }

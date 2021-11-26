@@ -5,24 +5,23 @@ import game.component.geometry.shape.Polygon;
 public class ScreenCanvasAdapter {
 
   private final double scale;
-  private final double xOffset;
-  private final double yOffset;
+  private final RealVertex offset;
 
-  public ScreenCanvasAdapter(Vertex<Integer> inputDimensions, Vertex<Integer> outputDimensions) {
+  public ScreenCanvasAdapter(IntegerVertex inputDimensions, IntegerVertex outputDimensions) {
     this.scale =
         Math.min(
             outputDimensions.getX() / (double) inputDimensions.getX(),
             outputDimensions.getY() / (double) inputDimensions.getY());
-    this.xOffset = (outputDimensions.getX() - inputDimensions.getX() * scale) / 2.0;
-    this.yOffset = (outputDimensions.getY() - inputDimensions.getY() * scale) / 2.0;
+    // offset = (output - input * scale) / 2.0
+    this.offset = outputDimensions.toReal().minus(inputDimensions.toReal().grow(scale)).shrink(2.0);
   }
 
-  public Vertex<Double> reverse(Vertex<Double> vertex) {
-    return new Vertex<>((vertex.getX() - xOffset) / scale, (vertex.getY() - yOffset) / scale);
+  public RealVertex reverse(RealVertex vertex) {
+    return vertex.minus(offset).shrink(scale);
   }
 
-  public Vertex<Double> adapt(Vertex<Double> vertex) {
-    return new Vertex<>(vertex.getX() * scale + xOffset, vertex.getY() * scale + yOffset);
+  public RealVertex adapt(RealVertex vertex) {
+    return vertex.grow(scale).plus(offset);
   }
 
   public Polygon adapt(Polygon polygon) {

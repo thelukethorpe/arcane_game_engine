@@ -1,8 +1,8 @@
 package game.component;
 
 import game.canvas.Canvas;
+import game.component.geometry.RealVertex;
 import game.component.geometry.ScreenCanvasAdapter;
-import game.component.geometry.Vertex;
 import game.util.concurrent.Atomic;
 
 public abstract class Component {
@@ -15,7 +15,7 @@ public abstract class Component {
 
   public abstract void print(Canvas canvas);
 
-  public abstract void translate(Vertex<Double> offset);
+  public abstract void translate(RealVertex offset);
 
   public abstract Component apply(ScreenCanvasAdapter screenCanvasAdapter);
 

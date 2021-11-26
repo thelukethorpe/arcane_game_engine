@@ -3,8 +3,9 @@ package game.component;
 import game.canvas.Canvas;
 import game.canvas.Colour;
 import game.canvas.Shader;
+import game.component.geometry.IntegerVertex;
+import game.component.geometry.RealVertex;
 import game.component.geometry.ScreenCanvasAdapter;
-import game.component.geometry.Vertex;
 import game.component.geometry.shape.Polygon;
 
 public class PolygonComponent extends Component {
@@ -20,7 +21,7 @@ public class PolygonComponent extends Component {
 
   @Override
   public void print(Canvas canvas) {
-    for (Vertex<Integer> vertex : polygon.getIntegerCovering()) {
+    for (IntegerVertex vertex : polygon.getIntegerCovering()) {
       int x = vertex.getX();
       int y = vertex.getY();
       Colour colour = shader.shade(x, y);
@@ -29,10 +30,8 @@ public class PolygonComponent extends Component {
   }
 
   @Override
-  public void translate(Vertex<Double> offset) {
-    polygon =
-        polygon.transform(
-            vertex -> new Vertex<>(vertex.getX() + offset.getX(), vertex.getY() + offset.getY()));
+  public void translate(RealVertex offset) {
+    polygon = polygon.transform(vertex -> vertex.plus(offset));
   }
 
   @Override
@@ -40,7 +39,7 @@ public class PolygonComponent extends Component {
     return new PolygonComponent(
         screenCanvasAdapter.adapt(polygon),
         (x, y) -> {
-          Vertex<Double> virtualVertex = screenCanvasAdapter.reverse(new Vertex<>(x, y));
+          RealVertex virtualVertex = screenCanvasAdapter.reverse(new RealVertex(x, y));
           return shader.shade(virtualVertex.getX(), virtualVertex.getY());
         },
         this.getPrecedence());

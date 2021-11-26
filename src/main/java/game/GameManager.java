@@ -1,8 +1,8 @@
 package game;
 
 import game.component.ComponentManager;
+import game.component.geometry.IntegerVertex;
 import game.component.geometry.ScreenCanvasAdapter;
-import game.component.geometry.Vertex;
 import game.scene.SceneManager;
 
 public class GameManager {
@@ -30,6 +30,7 @@ public class GameManager {
 
   public ScreenCanvasAdapter getScreenCanvasAdapter(int virtualWidth, int virtualHeight) {
     return new ScreenCanvasAdapter(
-        new Vertex<>(virtualWidth, virtualHeight), new Vertex<>(screenWidth, screenHeight));
+        new IntegerVertex(virtualWidth, virtualHeight),
+        new IntegerVertex(screenWidth, screenHeight));
   }
 }

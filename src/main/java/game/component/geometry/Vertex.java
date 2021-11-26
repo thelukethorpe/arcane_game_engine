@@ -33,7 +33,7 @@ public class Vertex<T> {
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;
-    } else if (obj instanceof Vertex) {
+    } else if (obj instanceof IntegerVertex) {
       Vertex that = (Vertex) obj;
       return this.x.equals(that.x) && this.y.equals(that.y);
     }

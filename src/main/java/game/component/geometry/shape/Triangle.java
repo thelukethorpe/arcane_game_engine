@@ -1,6 +1,7 @@
 package game.component.geometry.shape;
 
-import game.component.geometry.Vertex;
+import game.component.geometry.IntegerVertex;
+import game.component.geometry.RealVertex;
 import game.util.MathUtil;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -8,25 +9,25 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Triangle implements Polygon {
-  private final Vertex<Double> a;
-  private final Vertex<Double> b;
-  private final Vertex<Double> c;
+  private final RealVertex a;
+  private final RealVertex b;
+  private final RealVertex c;
 
-  public Triangle(Vertex<Double> a, Vertex<Double> b, Vertex<Double> c) {
+  public Triangle(RealVertex a, RealVertex b, RealVertex c) {
     this.a = a;
     this.b = b;
     this.c = c;
   }
 
-  private double sign(Vertex<Double> p, Vertex<Double> q, Vertex<Double> r) {
+  private double sign(RealVertex p, RealVertex q, RealVertex r) {
     return (p.getX() - r.getX()) * (q.getY() - r.getY())
         - (q.getX() - r.getX()) * (p.getY() - r.getY());
   }
 
   @Override
-  public boolean contains(Vertex<Integer> vertex) {
+  public boolean contains(IntegerVertex vertex) {
     // Half-plane check.
-    Vertex<Double> p = new Vertex<>(vertex.getX().doubleValue(), vertex.getY().doubleValue());
+    RealVertex p = new RealVertex(vertex.getX(), vertex.getY());
     double dot1 = sign(p, a, b);
     double dot2 = sign(p, b, c);
     double dot3 = sign(p, c, a);
@@ -36,20 +37,20 @@ public class Triangle implements Polygon {
   }
 
   @Override
-  public List<Vertex<Double>> vertices() {
+  public List<RealVertex> vertices() {
     return List.of(a, b, c);
   }
 
   @Override
-  public Collection<Vertex<Integer>> getIntegerCovering() {
+  public Collection<IntegerVertex> getIntegerCovering() {
     int xTopLeft = MathUtil.floor(MathUtil.minimum(a.getX(), b.getX(), c.getX()));
     int yTopLeft = MathUtil.floor(MathUtil.minimum(a.getY(), b.getY(), c.getY()));
     int xBottomRight = MathUtil.ceiling(MathUtil.maximum(a.getX(), b.getX(), c.getX()));
     int yBottomRight = MathUtil.ceiling(MathUtil.maximum(a.getY(), b.getY(), c.getY()));
-    Collection<Vertex<Integer>> result = new LinkedList<>();
+    Collection<IntegerVertex> result = new LinkedList<>();
     for (int x = xTopLeft; x <= xBottomRight; x++) {
       for (int y = yTopLeft; y <= yBottomRight; y++) {
-        Vertex<Integer> vertex = new Vertex<>(x, y);
+        IntegerVertex vertex = new IntegerVertex(x, y);
         if (this.contains(vertex)) {
           result.add(vertex);
         }
@@ -59,7 +60,7 @@ public class Triangle implements Polygon {
   }
 
   @Override
-  public Polygon transform(Function<Vertex<Double>, Vertex<Double>> function) {
+  public Polygon transform(Function<RealVertex, RealVertex> function) {
     return new Triangle(function.apply(a), function.apply(b), function.apply(c));
   }
 }
