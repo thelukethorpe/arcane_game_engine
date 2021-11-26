@@ -5,6 +5,8 @@ public class Colour {
   private static final int RGB_VALUE_LIMIT = 255;
 
   public static final Colour BLACK = Colour.rgb(0, 0, 0);
+  public static final Colour WHITE = Colour.rgb(RGB_VALUE_LIMIT, RGB_VALUE_LIMIT, RGB_VALUE_LIMIT);
+
   public static final Colour RED = Colour.rgb(RGB_VALUE_LIMIT, 0, 0);
   public static final Colour GREEN = Colour.rgb(0, RGB_VALUE_LIMIT, 0);
   public static final Colour BLUE = Colour.rgb(0, 0, RGB_VALUE_LIMIT);

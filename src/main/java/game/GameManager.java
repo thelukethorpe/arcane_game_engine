@@ -1,8 +1,8 @@
 package game;
 
 import game.component.ComponentManager;
+import game.component.geometry.ScreenCanvasAdapter;
 import game.component.geometry.Vertex;
-import game.component.geometry.VirtualCanvasMapper;
 import game.scene.SceneManager;
 
 public class GameManager {
@@ -28,8 +28,8 @@ public class GameManager {
     return sceneManager.getCurrentScene().getComponentManager();
   }
 
-  public VirtualCanvasMapper getVirtualCanvasMapper(int virtualWidth, int virtualHeight) {
-    return new VirtualCanvasMapper(
+  public ScreenCanvasAdapter getScreenCanvasAdapter(int virtualWidth, int virtualHeight) {
+    return new ScreenCanvasAdapter(
         new Vertex<>(virtualWidth, virtualHeight), new Vertex<>(screenWidth, screenHeight));
   }
 }

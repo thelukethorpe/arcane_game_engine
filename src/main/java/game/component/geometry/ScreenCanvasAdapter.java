@@ -2,13 +2,13 @@ package game.component.geometry;
 
 import game.component.geometry.shape.Polygon;
 
-public class VirtualCanvasMapper {
+public class ScreenCanvasAdapter {
 
   private final double scale;
   private final double xOffset;
   private final double yOffset;
 
-  public VirtualCanvasMapper(Vertex<Integer> inputDimensions, Vertex<Integer> outputDimensions) {
+  public ScreenCanvasAdapter(Vertex<Integer> inputDimensions, Vertex<Integer> outputDimensions) {
     this.scale =
         Math.min(
             outputDimensions.getX() / (double) inputDimensions.getX(),
@@ -18,16 +18,14 @@ public class VirtualCanvasMapper {
   }
 
   public Vertex<Double> reverse(Vertex<Double> vertex) {
-    //    return new Vertex<>((vertex.getX() / scale) - xOffset, (vertex.getY() / scale) - yOffset);
     return new Vertex<>((vertex.getX() - xOffset) / scale, (vertex.getY() - yOffset) / scale);
   }
 
-  public Vertex<Double> map(Vertex<Double> vertex) {
-    //    return new Vertex<>((vertex.getX() + xOffset) * scale, (vertex.getY() + yOffset) * scale);
+  public Vertex<Double> adapt(Vertex<Double> vertex) {
     return new Vertex<>(vertex.getX() * scale + xOffset, vertex.getY() * scale + yOffset);
   }
 
-  public Polygon map(Polygon polygon) {
-    return polygon.transform(this::map);
+  public Polygon adapt(Polygon polygon) {
+    return polygon.transform(this::adapt);
   }
 }

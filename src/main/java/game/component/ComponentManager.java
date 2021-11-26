@@ -1,66 +1,45 @@
 package game.component;
 
-import game.component.geometry.VirtualCanvasMapper;
+import game.component.geometry.ScreenCanvasAdapter;
 import game.util.concurrent.Atomic;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 public class ComponentManager {
   private final ConcurrentLinkedQueue<Component> components;
-  private final Atomic<VirtualCanvasMapper> virtualCanvasMapper;
+  private final Atomic<ScreenCanvasAdapter> screenCanvasAdapter;
 
   public ComponentManager() {
     this.components = new ConcurrentLinkedQueue<>();
-    this.virtualCanvasMapper = new Atomic<>();
+    this.screenCanvasAdapter = new Atomic<>();
   }
 
-  public void setVirtualCanvasMapper(VirtualCanvasMapper virtualCanvasMapper) {
-    this.virtualCanvasMapper.set(virtualCanvasMapper);
+  public void setScreenCanvasAdapter(ScreenCanvasAdapter screenCanvasAdapter) {
+    this.screenCanvasAdapter.set(screenCanvasAdapter);
   }
 
   public void addComponent(Component component) {
-    VirtualCanvasMapper virtualCanvasMapper = this.virtualCanvasMapper.get();
-    if (virtualCanvasMapper != null) {
-      component = component.apply(virtualCanvasMapper);
-    }
     components.add(component);
   }
 
-  public List<Component> getComponents() {
-    return new ArrayList<>(components);
-  }
-
-  public List<Component> getComponentsInOrderOfAppearance() {
-    PriorityQueue<ComponentWithCachedPrecedence> componentsInOrderOfAppearance =
-        new PriorityQueue<>();
+  public List<Component> getScreenAdaptedComponents() {
+    ScreenCanvasAdapter screenCanvasAdapter = this.screenCanvasAdapter.get();
+    List<Component> screenAdaptedComponents = new LinkedList<>();
     for (Component component : components) {
-      componentsInOrderOfAppearance.offer(new ComponentWithCachedPrecedence(component));
+      if (screenCanvasAdapter == null) {
+        throw new MissingScreenCanvasAdapterException("Screen canvas adapter has not been set");
+      }
+      screenAdaptedComponents.add(component.apply(screenCanvasAdapter));
     }
-    return componentsInOrderOfAppearance.stream()
-        .map(ComponentWithCachedPrecedence::getComponent)
-        .collect(Collectors.toList());
+    return screenAdaptedComponents;
   }
 
-  private static class ComponentWithCachedPrecedence
-      implements Comparable<ComponentWithCachedPrecedence> {
-    private final double cachedPrecedence;
-    private final Component component;
-
-    private ComponentWithCachedPrecedence(Component component) {
-      this.cachedPrecedence = component.getPrecedence();
-      this.component = component;
-    }
-
-    @Override
-    public int compareTo(ComponentWithCachedPrecedence that) {
-      return Double.compare(this.cachedPrecedence, that.cachedPrecedence);
-    }
-
-    public Component getComponent() {
-      return component;
-    }
+  public List<Component> getScreenAdaptedComponentsInOrderOfAppearance() {
+    List<Component> screenAdaptedComponents = new ArrayList<>(getScreenAdaptedComponents());
+    screenAdaptedComponents.sort(Comparator.comparingDouble(Component::getPrecedence));
+    return screenAdaptedComponents;
   }
 }

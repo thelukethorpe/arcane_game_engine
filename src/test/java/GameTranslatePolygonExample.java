@@ -6,39 +6,35 @@ import game.canvas.Shader;
 import game.component.Component;
 import game.component.ComponentManager;
 import game.component.PolygonComponent;
+import game.component.geometry.ScreenCanvasAdapter;
 import game.component.geometry.Vertex;
-import game.component.geometry.VirtualCanvasMapper;
 import game.component.geometry.shape.Rectangle;
-import game.component.geometry.shape.Triangle;
 import game.scene.Scene;
 import java.util.concurrent.TimeUnit;
 
-public class GamePolygonExample1 {
+public class GameTranslatePolygonExample {
   public static void main(String[] args) {
     GameScript gameScript =
         gameManager -> {
           int virtualWidth = 100;
           int virtualHeight = 50;
-          VirtualCanvasMapper virtualCanvasMapper =
-              gameManager.getVirtualCanvasMapper(virtualWidth, virtualHeight);
-          Component redTriangle =
+          ScreenCanvasAdapter screenCanvasAdapter =
+              gameManager.getScreenCanvasAdapter(virtualWidth, virtualHeight);
+          Component whiteSquare =
               new PolygonComponent(
-                  new Triangle(
-                      new Vertex<>(0.0, 0.0), new Vertex<>(7.5, 0.2), new Vertex<>(50.0, 25.0)),
-                  Shader.of(Colour.RED));
-          Component greenSquare =
-              new PolygonComponent(
-                  new Rectangle(new Vertex<>(80.0, 30.0), 20.0, 20.0), Shader.of(Colour.GREEN));
-          Component blueRectangle =
-              new PolygonComponent(
-                  new Rectangle(new Vertex<>(50.0, 25.0), 15.0, 6.0), Shader.of(Colour.BLUE));
+                  new Rectangle(new Vertex<>(0.0, 0.0), 10.0, 10.0), Shader.of(Colour.WHITE), 0.0);
           ComponentManager componentManager = gameManager.getCurrentComponentManager();
-          componentManager.setVirtualCanvasMapper(virtualCanvasMapper);
-          componentManager.addComponent(redTriangle);
-          componentManager.addComponent(greenSquare);
-          componentManager.addComponent(blueRectangle);
+          componentManager.setScreenCanvasAdapter(screenCanvasAdapter);
+          componentManager.addComponent(whiteSquare);
+          long numberOfFrames = TimeUnit.SECONDS.toMillis(10);
+          double delta = 1 / (double) numberOfFrames;
+          Vertex<Double> vertexDelta = new Vertex<>(delta * virtualWidth, delta * virtualHeight);
           try {
-            TimeUnit.SECONDS.sleep(10);
+            for (int i = 0; i < numberOfFrames; i++) {
+              whiteSquare.translate(vertexDelta);
+              TimeUnit.MILLISECONDS.sleep(1);
+            }
+
           } catch (InterruptedException e) {
             e.printStackTrace();
           }

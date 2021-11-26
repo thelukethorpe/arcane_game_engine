@@ -32,7 +32,7 @@ public class Scene {
   }
 
   private void printComponents(ScreenCanvas screenCanvas) {
-    List<Component> components = componentManager.getComponentsInOrderOfAppearance();
+    List<Component> components = componentManager.getScreenAdaptedComponentsInOrderOfAppearance();
     Collections.reverse(components);
     for (Component component : components) {
       component.print(screenCanvas);
