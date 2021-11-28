@@ -2,9 +2,7 @@ package game.component.geometry.animation;
 
 import game.component.Component;
 import java.time.Duration;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class Animator<TComponent extends Component> {
@@ -17,23 +15,17 @@ public class Animator<TComponent extends Component> {
     this.animation = animation;
   }
 
-  public void animate(TComponent component) {
+  public void animate(List<TComponent> components) {
+    int nextComponent = 0;
     long durationMs = duration.toMillis();
     long startTimeMs = System.currentTimeMillis();
     Supplier<Long> getCurrentTimeMs = () -> System.currentTimeMillis() - startTimeMs;
     for (long currentTimeMs = getCurrentTimeMs.get();
         currentTimeMs <= durationMs;
         currentTimeMs = getCurrentTimeMs.get()) {
-      animation.tick(currentTimeMs, component);
+      animation.tick(currentTimeMs, components.get(nextComponent));
+      nextComponent = (nextComponent + 1) % components.size();
     }
-  }
-
-  public Future<Void> animateAsync(TComponent component) {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    return executor.submit(
-        () -> {
-          animate(component);
-          return null;
-        });
+    components.forEach(component -> animation.tick(durationMs, component));
   }
 }

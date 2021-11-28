@@ -13,6 +13,7 @@ import game.component.geometry.shape.Circle;
 import game.scene.Scene;
 import game.util.time.TimeKeeper;
 import java.time.Duration;
+import java.util.List;
 import java.util.function.Function;
 
 public class GameAnimatePolygonExample {
@@ -23,12 +24,20 @@ public class GameAnimatePolygonExample {
           int virtualHeight = 50;
           ScreenCanvasAdapter screenCanvasAdapter =
               gameManager.getScreenCanvasAdapter(virtualWidth, virtualHeight);
+          PolygonComponent redCircle =
+              new PolygonComponent(
+                  new Circle(new RealVertex(45.0, 35.0), 5.0), Shader.of(Colour.RED), 0.0);
           PolygonComponent yellowCircle =
               new PolygonComponent(
-                  new Circle(new RealVertex(50.0, 35.0), 5.0), Shader.of(Colour.YELLOW), 0.0);
+                  new Circle(new RealVertex(50.0, 35.0), 5.0), Shader.of(Colour.YELLOW), 1.0);
+          PolygonComponent greenCircle =
+              new PolygonComponent(
+                  new Circle(new RealVertex(55.0, 35.0), 5.0), Shader.of(Colour.GREEN), 2.0);
           ComponentManager componentManager = gameManager.getCurrentComponentManager();
           componentManager.setScreenCanvasAdapter(screenCanvasAdapter);
+          componentManager.addComponent(redCircle);
           componentManager.addComponent(yellowCircle);
+          componentManager.addComponent(greenCircle);
           double g = 9.81;
           double l = 20.0;
           double initialTheta = 0.75;
@@ -51,7 +60,7 @@ public class GameAnimatePolygonExample {
               };
           Animator<PolygonComponent> pendulumSwingAnimator =
               new Animator<>(Duration.ofSeconds(10), pendulumSwingAnimation);
-          pendulumSwingAnimator.animate(yellowCircle);
+          pendulumSwingAnimator.animate(List.of(redCircle, yellowCircle, greenCircle));
           gameManager.exitGame();
         };
     GameEngine gameEngine =
