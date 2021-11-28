@@ -3,11 +3,9 @@ package game.component.geometry.shape;
 import game.component.geometry.IntegerVertex;
 import game.component.geometry.RealVertex;
 import game.util.MathUtil;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.function.Function;
 
-public class Triangle implements Polygon {
+public class Triangle extends Polygon {
   private final RealVertex a;
   private final RealVertex b;
   private final RealVertex c;
@@ -36,21 +34,13 @@ public class Triangle implements Polygon {
   }
 
   @Override
-  public Collection<IntegerVertex> getIntegerCovering() {
-    int xTopLeft = MathUtil.floor(MathUtil.minimum(a.getX(), b.getX(), c.getX()));
-    int yTopLeft = MathUtil.floor(MathUtil.minimum(a.getY(), b.getY(), c.getY()));
-    int xBottomRight = MathUtil.ceiling(MathUtil.maximum(a.getX(), b.getX(), c.getX()));
-    int yBottomRight = MathUtil.ceiling(MathUtil.maximum(a.getY(), b.getY(), c.getY()));
-    Collection<IntegerVertex> result = new LinkedList<>();
-    for (int x = xTopLeft; x <= xBottomRight; x++) {
-      for (int y = yTopLeft; y <= yBottomRight; y++) {
-        IntegerVertex vertex = new IntegerVertex(x, y);
-        if (this.contains(vertex)) {
-          result.add(vertex);
-        }
-      }
-    }
-    return result;
+  protected Rectangle getRectangleCovering() {
+    double xTopLeft = MathUtil.minimum(a.getX(), b.getX(), c.getX());
+    double yTopLeft = MathUtil.minimum(a.getY(), b.getY(), c.getY());
+    double xBottomRight = MathUtil.maximum(a.getX(), b.getX(), c.getX());
+    double yBottomRight = MathUtil.maximum(a.getY(), b.getY(), c.getY());
+    return new Rectangle(
+        new RealVertex(xTopLeft, yTopLeft), new RealVertex(xBottomRight, yBottomRight));
   }
 
   @Override

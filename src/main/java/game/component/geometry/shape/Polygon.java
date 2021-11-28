@@ -2,14 +2,33 @@ package game.component.geometry.shape;
 
 import game.component.geometry.IntegerVertex;
 import game.component.geometry.RealVertex;
-import java.util.Collection;
+import game.util.MathUtil;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
-public interface Polygon {
+public abstract class Polygon {
 
-  boolean contains(IntegerVertex vertex);
+  public abstract boolean contains(IntegerVertex vertex);
 
-  Collection<IntegerVertex> getIntegerCovering();
+  protected abstract Rectangle getRectangleCovering();
 
-  Polygon transform(Function<RealVertex, RealVertex> function);
+  public Stream<IntegerVertex> getIntegerCovering() {
+    Rectangle rectangleCovering = this.getRectangleCovering();
+    IntegerVertex topLeftVertex =
+        IntegerVertex.unbox(rectangleCovering.getTopLeftVertex().map(MathUtil::floor));
+    IntegerVertex bottomRightVertex =
+        IntegerVertex.unbox(rectangleCovering.getBottomRightVertex().map(MathUtil::ceiling));
+    return Stream.iterate(
+            topLeftVertex,
+            vertex -> !vertex.equals(bottomRightVertex),
+            vertex -> {
+              if (vertex.getY() <= bottomRightVertex.getY()) {
+                return vertex.plus(0, 1);
+              }
+              return new IntegerVertex(vertex.getX() + 1, topLeftVertex.getY());
+            })
+        .filter(this::contains);
+  }
+
+  public abstract Polygon transform(Function<RealVertex, RealVertex> function);
 }

@@ -2,12 +2,9 @@ package game.component.geometry.shape;
 
 import game.component.geometry.IntegerVertex;
 import game.component.geometry.RealVertex;
-import game.util.MathUtil;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.function.Function;
 
-public class Rectangle implements Polygon {
+public class Rectangle extends Polygon {
 
   private final RealVertex topLeftVertex;
   private final double width;
@@ -19,15 +16,19 @@ public class Rectangle implements Polygon {
     this.height = height;
   }
 
-  private Rectangle(RealVertex topLeftVertex, RealVertex bottomRightVertex) {
+  public Rectangle(RealVertex topLeftVertex, RealVertex bottomRightVertex) {
     this(
         topLeftVertex,
         bottomRightVertex.getX() - topLeftVertex.getX(),
         bottomRightVertex.getY() - topLeftVertex.getY());
   }
 
-  private RealVertex getBottomRightVertex() {
-    return new RealVertex(topLeftVertex.getX() + width, topLeftVertex.getY() + height);
+  public RealVertex getTopLeftVertex() {
+    return topLeftVertex;
+  }
+
+  public RealVertex getBottomRightVertex() {
+    return topLeftVertex.plus(new RealVertex(width, height));
   }
 
   @Override
@@ -39,18 +40,8 @@ public class Rectangle implements Polygon {
   }
 
   @Override
-  public Collection<IntegerVertex> getIntegerCovering() {
-    int xTopLeft = MathUtil.ceiling(topLeftVertex.getX());
-    int yTopLeft = MathUtil.ceiling(topLeftVertex.getY());
-    int xBottomRight = MathUtil.floor(topLeftVertex.getX() + width);
-    int yBottomRight = MathUtil.floor(topLeftVertex.getY() + height);
-    Collection<IntegerVertex> result = new LinkedList<>();
-    for (int x = xTopLeft; x <= xBottomRight; x++) {
-      for (int y = yTopLeft; y <= yBottomRight; y++) {
-        result.add(new IntegerVertex(x, y));
-      }
-    }
-    return result;
+  protected Rectangle getRectangleCovering() {
+    return this;
   }
 
   @Override

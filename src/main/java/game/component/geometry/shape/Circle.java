@@ -2,12 +2,9 @@ package game.component.geometry.shape;
 
 import game.component.geometry.IntegerVertex;
 import game.component.geometry.RealVertex;
-import game.util.MathUtil;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.function.Function;
 
-public class Circle implements Polygon {
+public class Circle extends Polygon {
 
   private final RealVertex centre;
   private final double radius;
@@ -25,21 +22,9 @@ public class Circle implements Polygon {
   }
 
   @Override
-  public Collection<IntegerVertex> getIntegerCovering() {
-    int xTopLeft = MathUtil.floor(centre.getX() - radius);
-    int yTopLeft = MathUtil.floor(centre.getY() - radius);
-    int xBottomRight = MathUtil.ceiling(centre.getX() + radius);
-    int yBottomRight = MathUtil.ceiling(centre.getY() + radius);
-    Collection<IntegerVertex> result = new LinkedList<>();
-    for (int x = xTopLeft; x <= xBottomRight; x++) {
-      for (int y = yTopLeft; y <= yBottomRight; y++) {
-        IntegerVertex vertex = new IntegerVertex(x, y);
-        if (this.contains(vertex)) {
-          result.add(vertex);
-        }
-      }
-    }
-    return result;
+  protected Rectangle getRectangleCovering() {
+    RealVertex radialVertex = new RealVertex(radius, radius);
+    return new Rectangle(centre.minus(radialVertex), centre.plus(radialVertex));
   }
 
   @Override

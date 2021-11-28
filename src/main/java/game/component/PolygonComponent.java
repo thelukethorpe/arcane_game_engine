@@ -3,7 +3,6 @@ package game.component;
 import game.canvas.Canvas;
 import game.canvas.Colour;
 import game.canvas.Shader;
-import game.component.geometry.IntegerVertex;
 import game.component.geometry.RealVertex;
 import game.component.geometry.ScreenCanvasAdapter;
 import game.component.geometry.shape.Polygon;
@@ -21,12 +20,15 @@ public class PolygonComponent extends Component {
 
   @Override
   public void print(Canvas canvas) {
-    for (IntegerVertex vertex : polygon.getIntegerCovering()) {
-      int x = vertex.getX();
-      int y = vertex.getY();
-      Colour colour = shader.shade(x, y);
-      canvas.setPixel(x, y, colour);
-    }
+    polygon
+        .getIntegerCovering()
+        .forEach(
+            vertex -> {
+              int x = vertex.getX();
+              int y = vertex.getY();
+              Colour colour = shader.shade(x, y);
+              canvas.setPixel(x, y, colour);
+            });
   }
 
   @Override
