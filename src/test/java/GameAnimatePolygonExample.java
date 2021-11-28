@@ -40,7 +40,7 @@ public class GameAnimatePolygonExample {
                 return new RealVertex(x, y);
               };
           TimeKeeper<RealVertex> pendulumTimeKeeper = new TimeKeeper<>(pendulumPosition.apply(0.0));
-          Animator<PolygonComponent> pendulumSwingAnimator =
+          Animation<PolygonComponent> pendulumSwingAnimation =
               (timeInMs, component) -> {
                 double time = timeInMs / 1000.0;
                 RealVertex previousPosition = pendulumTimeKeeper.getPreviousValue();
@@ -49,9 +49,9 @@ public class GameAnimatePolygonExample {
                 pendulumTimeKeeper.update(time, nextPosition);
                 component.translate(positionDelta);
               };
-          Animation<PolygonComponent> pendulumSwingAnimation =
-              new Animation<>(Duration.ofSeconds(10), pendulumSwingAnimator);
-          pendulumSwingAnimation.execute(yellowCircle);
+          Animator<PolygonComponent> pendulumSwingAnimator =
+              new Animator<>(Duration.ofSeconds(10), pendulumSwingAnimation);
+          pendulumSwingAnimator.animate(yellowCircle);
           gameManager.exitGame();
         };
     GameEngine gameEngine =
