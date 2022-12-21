@@ -1,3 +1,5 @@
+package gl;
+
 import game.GameEngine;
 import game.GameException;
 import game.GameScript;
@@ -5,11 +7,9 @@ import game.canvas.Colour;
 import game.canvas.Shader;
 import game.component.Component;
 import game.component.ComponentManager;
-import game.component.PolygonComponent;
-import game.component.geometry.RealVertex;
-import game.component.geometry.ScreenCanvasAdapter;
-import game.component.geometry.shape.Rectangle;
+import geometry.vertex.RealVertex;
 import game.scene.Scene;
+
 import java.util.concurrent.TimeUnit;
 
 public class GameTranslatePolygonExample {
@@ -23,9 +23,8 @@ public class GameTranslatePolygonExample {
           Component whiteSquare =
               new PolygonComponent(
                   new Rectangle(new RealVertex(0.0, 0.0), 10.0, 10.0),
-                  Shader.of(Colour.WHITE),
-                  0.0);
-          ComponentManager componentManager = gameManager.getCurrentComponentManager();
+                      0.0);
+          ComponentManager<TComponent> componentManager = gameManager.getCurrentComponentManager();
           componentManager.setScreenCanvasAdapter(screenCanvasAdapter);
           componentManager.addComponent(whiteSquare);
           long numberOfFrames = TimeUnit.SECONDS.toMillis(10);
@@ -43,7 +42,7 @@ public class GameTranslatePolygonExample {
           gameManager.exitGame();
         };
     GameEngine gameEngine =
-        GameEngine.withScenes(new Scene("Boat", Shader.of(Colour.BLACK)))
+        GameEngine.withScenes(new Scene<TComponent>("Boat", Shader.of(Colour.BLACK)))
             .fullscreen()
             .borderless()
             .build();

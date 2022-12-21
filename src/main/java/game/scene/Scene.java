@@ -1,47 +1,34 @@
 package game.scene;
 
 import game.canvas.ScreenCanvas;
-import game.canvas.Shader;
 import game.component.Component;
 import game.component.ComponentManager;
-import java.util.Collections;
-import java.util.List;
+import util.time.Tickable;
 
-public class Scene {
+public class Scene<TComponent extends Component> implements Tickable {
 
   private final String name;
-  private final Shader backgroundShader;
-  private final ComponentManager componentManager;
+  private final ComponentManager<TComponent> componentManager;
 
-  public Scene(String name, Shader backgroundShader) {
+  public Scene(String name) {
     this.name = name;
-    this.backgroundShader = backgroundShader;
-    this.componentManager = new ComponentManager();
+    this.componentManager = new ComponentManager<>();
+  }
+
+  @Override
+  public void tick(double delta) {
+    componentManager.tick(delta);
   }
 
   public String getName() {
     return name;
   }
 
-  public ComponentManager getComponentManager() {
+  public ComponentManager<TComponent> getComponentManager() {
     return componentManager;
   }
 
-  private void printBackground(ScreenCanvas screenCanvas) {
-    screenCanvas.shade(backgroundShader);
-  }
-
-  private void printComponents(ScreenCanvas screenCanvas) {
-    List<Component> components = componentManager.getScreenAdaptedComponentsInOrderOfAppearance();
-    Collections.reverse(components);
-    for (Component component : components) {
-      component.print(screenCanvas);
-    }
-  }
-
-  public void render(ScreenCanvas screenCanvas) {
-    printBackground(screenCanvas);
-    printComponents(screenCanvas);
-    screenCanvas.paintToScreen();
+  public void renderTo(ScreenCanvas<TComponent> screenCanvas) {
+    screenCanvas.drawToScreen(componentManager.getComponentsInReverseOrderOfAppearance());
   }
 }

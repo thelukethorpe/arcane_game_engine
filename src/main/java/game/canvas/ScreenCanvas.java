@@ -1,10 +1,13 @@
 package game.canvas;
 
+import game.component.Component;
 import game.io.KeyboardMouseListener;
 
-public interface ScreenCanvas extends Canvas {
+import java.util.List;
 
-  void paintToScreen();
+public interface ScreenCanvas<TComponent extends Component> {
+
+  void drawToScreen(List<TComponent> components);
 
   void show();
 

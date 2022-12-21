@@ -1,4 +1,4 @@
-package game.component.geometry;
+package geometry.vertex;
 
 public class RealVertex extends Vertex<Double> {
   public RealVertex(double x, double y) {
@@ -23,11 +23,7 @@ public class RealVertex extends Vertex<Double> {
     return new RealVertex(this.getX() - that.getX(), this.getY() - that.getY());
   }
 
-  public RealVertex grow(double factor) {
+  public RealVertex scale(double factor) {
     return unbox(this.map(v -> v * factor));
-  }
-
-  public RealVertex shrink(double factor) {
-    return unbox(this.map(v -> v / factor));
   }
 }

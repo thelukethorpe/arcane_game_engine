@@ -1,45 +1,57 @@
 package game.component;
 
-import game.component.geometry.ScreenCanvasAdapter;
-import game.util.concurrent.Atomic;
+import util.time.Tickable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
-public class ComponentManager {
-  private final ConcurrentLinkedQueue<Component> components;
-  private final Atomic<ScreenCanvasAdapter> screenCanvasAdapter;
+public class ComponentManager<TComponent extends Component> implements Tickable {
+  private final ConcurrentLinkedQueue<TComponent> components;
 
   public ComponentManager() {
     this.components = new ConcurrentLinkedQueue<>();
-    this.screenCanvasAdapter = new Atomic<>();
   }
 
-  public void setScreenCanvasAdapter(ScreenCanvasAdapter screenCanvasAdapter) {
-    this.screenCanvasAdapter.set(screenCanvasAdapter);
+  @Override
+  public void tick(double delta) {
+    components.forEach(component -> component.tick(delta));
   }
 
-  public void addComponent(Component component) {
+  public void addComponent(TComponent component) {
     components.add(component);
   }
 
-  public List<Component> getScreenAdaptedComponents() {
-    ScreenCanvasAdapter screenCanvasAdapter = this.screenCanvasAdapter.get();
-    List<Component> screenAdaptedComponents = new LinkedList<>();
-    for (Component component : components) {
-      if (screenCanvasAdapter == null) {
-        throw new MissingScreenCanvasAdapterException("Screen canvas adapter has not been set");
-      }
-      screenAdaptedComponents.add(component.apply(screenCanvasAdapter));
-    }
-    return screenAdaptedComponents;
+  public List<TComponent> getComponentsInReverseOrderOfAppearance() {
+    PriorityQueue<ComponentWithFixedPrecedence> componentsInOrderOfAppearance =
+        new PriorityQueue<>(Comparator.reverseOrder());
+    components.stream()
+        .map(ComponentWithFixedPrecedence::new)
+        .forEach(componentsInOrderOfAppearance::offer);
+    return componentsInOrderOfAppearance.stream()
+        .map(ComponentWithFixedPrecedence::getComponent)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public List<Component> getScreenAdaptedComponentsInOrderOfAppearance() {
-    List<Component> screenAdaptedComponents = new ArrayList<>(getScreenAdaptedComponents());
-    screenAdaptedComponents.sort(Comparator.comparingDouble(Component::getPrecedence));
-    return screenAdaptedComponents;
+  private class ComponentWithFixedPrecedence implements Comparable<ComponentWithFixedPrecedence> {
+    private final double precedence;
+    private final TComponent component;
+
+    private ComponentWithFixedPrecedence(TComponent component) {
+      this.precedence = component.getPrecedence();
+      this.component = component;
+    }
+
+    public TComponent getComponent() {
+      return component;
+    }
+
+    @Override
+    public int compareTo(ComponentWithFixedPrecedence that) {
+      return Double.compare(this.precedence, that.precedence);
+    }
   }
 }

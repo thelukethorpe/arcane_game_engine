@@ -1,4 +1,4 @@
-package game.util.concurrent;
+package util.concurrent;
 
 public class Atomic<T> {
   private T value;

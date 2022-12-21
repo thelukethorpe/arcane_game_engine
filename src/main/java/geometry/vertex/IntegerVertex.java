@@ -1,4 +1,4 @@
-package game.component.geometry;
+package geometry.vertex;
 
 public class IntegerVertex extends Vertex<Integer> {
 

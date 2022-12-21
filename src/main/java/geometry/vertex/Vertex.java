@@ -1,4 +1,4 @@
-package game.component.geometry;
+package geometry.vertex;
 
 import java.util.Objects;
 import java.util.function.Function;

@@ -1,19 +1,14 @@
 package game;
 
+import game.component.Component;
 import game.component.ComponentManager;
-import game.component.geometry.IntegerVertex;
-import game.component.geometry.ScreenCanvasAdapter;
 import game.scene.SceneManager;
 
-public class GameManager {
-  private final SceneManager sceneManager;
-  private final int screenWidth;
-  private final int screenHeight;
+public class GameManager<TComponent extends Component> {
+  private final SceneManager<TComponent> sceneManager;
 
-  public GameManager(SceneManager sceneManager, int screenWidth, int screenHeight) {
+  public GameManager(SceneManager<TComponent> sceneManager) {
     this.sceneManager = sceneManager;
-    this.screenWidth = screenWidth;
-    this.screenHeight = screenHeight;
   }
 
   public void loadScene(String name) {
@@ -24,13 +19,7 @@ public class GameManager {
     sceneManager.exitCurrentScene();
   }
 
-  public ComponentManager getCurrentComponentManager() {
+  public ComponentManager<TComponent> getCurrentComponentManager() {
     return sceneManager.getCurrentScene().getComponentManager();
-  }
-
-  public ScreenCanvasAdapter getScreenCanvasAdapter(int virtualWidth, int virtualHeight) {
-    return new ScreenCanvasAdapter(
-        new IntegerVertex(virtualWidth, virtualHeight),
-        new IntegerVertex(screenWidth, screenHeight));
   }
 }

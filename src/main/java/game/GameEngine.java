@@ -1,46 +1,32 @@
 package game;
 
-import game.canvas.BufferedScreenCanvas;
 import game.canvas.ScreenCanvas;
-import game.scene.DuplicateSceneNameException;
+import game.component.Component;
 import game.scene.Scene;
 import game.scene.SceneManager;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import util.time.TimeKeeper;
 
-public class GameEngine {
+public class GameEngine<TComponent extends Component> {
 
-  private final SceneManager sceneManager;
-  private final ScreenCanvas screenCanvas;
+  private final SceneManager<TComponent> sceneManager;
+  private final ScreenCanvas<TComponent> screenCanvas;
 
-  private GameEngine(SceneManager sceneManager, ScreenCanvas screenCanvas) {
+  protected GameEngine(
+      SceneManager<TComponent> sceneManager, ScreenCanvas<TComponent> screenCanvas) {
     this.sceneManager = sceneManager;
     this.screenCanvas = screenCanvas;
   }
 
-  public static Builder withScenes(Scene boat, Collection<Scene> otherScenes) {
-    return new Builder(boat, otherScenes);
-  }
-
-  public static Builder withScenes(Scene boat, Scene... otherScenes) {
-    return withScenes(boat, List.of(otherScenes));
-  }
-
   public void launch(GameScript gameScript) throws GameException {
-    Thread gameScriptThread =
-        new Thread(
-            () ->
-                gameScript.run(
-                    new GameManager(
-                        sceneManager, screenCanvas.getWidth(), screenCanvas.getHeight())));
+    Thread gameScriptThread = new Thread(() -> gameScript.run(new GameManager<>(sceneManager)));
     gameScriptThread.start();
     screenCanvas.show();
-    for (Scene currentScene = sceneManager.getCurrentScene();
+    TimeKeeper timeKeeper = new TimeKeeper();
+    for (Scene<TComponent> currentScene = sceneManager.getCurrentScene();
         currentScene != null;
         currentScene = sceneManager.getCurrentScene()) {
-      currentScene.render(screenCanvas);
+      currentScene.tick(timeKeeper.TickAndGetDelta());
+      currentScene.renderTo(screenCanvas);
     }
     screenCanvas.hide();
     screenCanvas.close();
@@ -48,42 +34,6 @@ public class GameEngine {
       gameScriptThread.join();
     } catch (InterruptedException e) {
       throw new GameException(e);
-    }
-  }
-
-  public static class Builder {
-
-    private final Scene boat;
-    private final Collection<Scene> otherScenes;
-    private BufferedScreenCanvas.Builder screenCanvasBuilder = BufferedScreenCanvas.builder();
-
-    private Builder(Scene boat, Collection<Scene> otherScenes) {
-      this.boat = boat;
-      this.otherScenes = otherScenes;
-      Set<String> names = new HashSet<>();
-      names.add(boat.getName());
-      for (Scene scene : otherScenes) {
-        String name = scene.getName();
-        if (names.contains(name)) {
-          throw new DuplicateSceneNameException(
-              "The scene with name \"" + name + "\" has already been defined.");
-        }
-        names.add(name);
-      }
-    }
-
-    public GameEngine build() {
-      return new GameEngine(new SceneManager(boat, otherScenes), screenCanvasBuilder.build());
-    }
-
-    public Builder fullscreen() {
-      screenCanvasBuilder = screenCanvasBuilder.fullscreen();
-      return this;
-    }
-
-    public Builder borderless() {
-      screenCanvasBuilder = screenCanvasBuilder.borderless();
-      return this;
     }
   }
 }

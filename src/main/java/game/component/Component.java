@@ -1,11 +1,10 @@
 package game.component;
 
-import game.canvas.Canvas;
-import game.component.geometry.RealVertex;
-import game.component.geometry.ScreenCanvasAdapter;
-import game.util.concurrent.Atomic;
+import geometry.vertex.RealVertex;
+import util.concurrent.Atomic;
+import util.time.Tickable;
 
-public abstract class Component {
+public abstract class Component implements Tickable {
 
   private final Atomic<Double> precedence;
 
@@ -13,11 +12,9 @@ public abstract class Component {
     this.precedence = new Atomic<>(precedence);
   }
 
-  public abstract void print(Canvas canvas);
-
   public abstract void translate(RealVertex offset);
 
-  public abstract Component apply(ScreenCanvasAdapter screenCanvasAdapter);
+  public abstract void scale(double factor);
 
   public double getPrecedence() {
     return precedence.get();
